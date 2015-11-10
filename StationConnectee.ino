@@ -23,7 +23,6 @@ DHT dht(10, DHT11);
 // Barometer
 SFE_BMP180 pressure;
 double temp, pression, hum, p0, a;
-
 // Light
 const int light=A1;
 int lightValue=0;
@@ -173,6 +172,7 @@ String sendData(String command, const int timeout, boolean debug)
 
 void loop() {
 
+
   u8g.firstPage();  //OLED Display
   do {
     OLED_display(pression, temp, hum, lightValue);
@@ -238,10 +238,10 @@ void loop() {
       }
     }
   }
+ 
+  if (millis() - last_time < sample_interval) return;
 
   last_time = millis();
-
-  if (millis() - last_time < sample_interval) return;
 
   if (!sendDataThingSpeak(pression, temp, hum, lightValue)) {
     Serial.println(F("%% failed sending data"));
@@ -286,6 +286,12 @@ void OLED_display(float pression, float temp, float hum, float lightValue)
     u8g.print("C");
     delay(1);
   }
+  /*
+  u8g.setPrintPos(10, 25);
+  u8g.print("M:");
+  u8g.print(MoistureValue, 1);
+  delay(1);
+  */
   u8g.setPrintPos(8, 36);
   u8g.print("smartmosphere.com");
   char strOut[3];
